@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../core/providers/audio_provider.dart';
 import '../../../../../core/theme/app_colors.dart';
 
-class GameHeader extends StatelessWidget {
+class GameHeader extends ConsumerWidget {
   const GameHeader({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final muted = ref.watch(isMutedProvider);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
@@ -49,8 +53,9 @@ class GameHeader extends StatelessWidget {
             ),
           ),
           _IconBtn(
-            icon: Icons.volume_up_rounded,
-            onTap: () {},
+            icon: muted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+            onTap: () =>
+                ref.read(isMutedProvider.notifier).state = !muted,
           ),
           const SizedBox(width: 8),
           _IconBtn(

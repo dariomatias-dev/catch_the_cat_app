@@ -5,7 +5,8 @@ import 'package:catch_the_cat/core/theme/app_theme.dart';
 
 import 'package:catch_the_cat/features/game/presentation/screens/game_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const ProviderScope(child: App()));
 }
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../core/providers/audio_provider.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../domain/entities/game_result.dart';
 import '../providers/game_provider.dart';
+import '../view_models/game_state_view_model.dart';
 import '../widgets/difficulty_selector.dart';
 import '../widgets/game_board_widget.dart';
 import '../widgets/game_header.dart';
@@ -16,6 +18,26 @@ class GameScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Init audio service on first build
+    final audio = ref.watch(audioServiceProvider);
+
+    ref.listen<bool>(isMutedProvider, (_, muted) => audio.setMuted(muted));
+
+    ref.listen<GameStateViewModel>(gameProvider, (prev, next) {
+      if (prev == null) return;
+      if (prev.catPosition != next.catPosition) { audio.playCatJump(); }
+      if (prev.isCpuThinking && !next.isCpuThinking &&
+          next.result == GameResult.inProgress) {
+        audio.playBarrierPlaced();
+      }
+      if (next.result == GameResult.playerWin &&
+          prev.result != GameResult.playerWin) { audio.playWin(); }
+      if (next.result == GameResult.cpuWin &&
+          prev.result != GameResult.cpuWin) { audio.playLose(); }
+      if (prev.result != GameResult.inProgress &&
+          next.result == GameResult.inProgress) { audio.resumeBackground(); }
+    });
+
     final result = ref.watch(gameProvider.select((s) => s.result));
     final gameOver = result != GameResult.inProgress;
 
