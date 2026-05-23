@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:catch_the_cat/core/theme/app_theme.dart';
 
+import 'package:catch_the_cat/features/game/presentation/screens/game_screen.dart';
+
 void main() {
   runApp(const ProviderScope(child: App()));
 }
@@ -17,7 +19,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
       darkTheme: AppTheme.dark,
-      home: const Scaffold(body: Center(child: Text('Catch the Cat'))),
+      home: const GameScreen(),
     );
   }
 }
