@@ -118,6 +118,7 @@ class GameNotifier extends Notifier<GameStateViewModel> {
       cpuScore: resultAfterCpu == GameResult.cpuWin ? state.cpuScore + 1 : state.cpuScore,
       validMoves: newMoves,
       isCpuThinking: false,
+      lastBarrierPosition: cpuMove,
     );
   }
 }

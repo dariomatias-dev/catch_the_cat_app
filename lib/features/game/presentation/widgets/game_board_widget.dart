@@ -73,6 +73,7 @@ class GameBoardWidget extends ConsumerWidget {
     final top = row * vSpacing;
     final cellState = state.board[row][col];
     final isValid = validSet.contains(pos);
+    final isLastBarrier = pos == state.lastBarrierPosition;
 
     return Positioned(
       left: left,
@@ -82,6 +83,7 @@ class GameBoardWidget extends ConsumerWidget {
         cellState: cellState,
         size: cellDiam,
         isValidMove: isValid,
+        isLastBarrier: isLastBarrier,
         onTap: () => ref.read(gameProvider.notifier).onCellTap(pos),
       ),
     );

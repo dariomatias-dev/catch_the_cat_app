@@ -1,67 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/providers/audio_provider.dart';
-import '../../../../../core/theme/app_colors.dart';
+import 'package:catch_the_cat/core/providers/audio_provider.dart';
+import 'package:catch_the_cat/core/theme/app_colors.dart';
 
 class GameHeader extends ConsumerWidget {
   const GameHeader({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final muted = ref.watch(isMutedProvider);
+    final bool muted = ref.watch(isMutedProvider);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 12.0),
       child: Row(
-        children: [
+        children: <Widget>[
           Container(
-            width: 40,
-            height: 40,
+            width: 48.0,
+            height: 48.0,
             decoration: BoxDecoration(
-              color: AppColors.surfaceCard,
-              borderRadius: BorderRadius.circular(10),
+              color: AppColors.accentBlue.withAlpha(48),
+              borderRadius: BorderRadius.circular(18.0),
             ),
-            child: const Center(
-              child: Text('🐱', style: TextStyle(fontSize: 20)),
+            child: const Icon(
+              Icons.pets_rounded,
+              color: AppColors.accentBlue,
+              size: 24.0,
             ),
           ),
-          const SizedBox(width: 10),
-          const Expanded(
+          const SizedBox(width: 12.0),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Text(
                   'Pegue o Gato',
                   style: TextStyle(
                     color: AppColors.accentBlue,
-                    fontSize: 18,
+                    fontSize: 20.0,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 0.3,
+                    letterSpacing: -0.5,
                   ),
                 ),
                 Text(
                   'FUGA ARCADE',
                   style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.5,
+                    color: AppColors.textSecondary.withAlpha(150),
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ],
             ),
           ),
-          _IconBtn(
+          _HeaderActionBtn(
+            onTap: () {
+              ref.read(isMutedProvider.notifier).state = !muted;
+            },
             icon: muted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
-            onTap: () =>
-                ref.read(isMutedProvider.notifier).state = !muted,
+            backgroundColor: AppColors.accentBlue.withAlpha(48),
+            iconColor: AppColors.accentBlue,
           ),
-          const SizedBox(width: 8),
-          _IconBtn(
-            icon: Icons.help_outline_rounded,
-            isCircle: true,
+          const SizedBox(width: 12.0),
+          _HeaderActionBtn(
             onTap: () => _showHelp(context),
+            icon: Icons.help_outline_rounded,
+            backgroundColor: AppColors.surfaceCard.withAlpha(255),
+            iconColor: AppColors.textSecondary,
           ),
         ],
       ),
@@ -71,56 +78,73 @@ class GameHeader extends ConsumerWidget {
   void _showHelp(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: AppColors.surfaceCard,
-        title: const Text(
-          'Como jogar',
-          style: TextStyle(color: AppColors.textPrimary),
-        ),
-        content: const Text(
-          'Você é o gato 🐱. Toque em uma casa adjacente vazia para mover.\n\n'
-          'Chegue à borda do tabuleiro para escapar!\n\n'
-          'A CPU bloqueará uma casa após cada jogada sua.',
-          style: TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'OK',
-              style: TextStyle(color: AppColors.accent),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.surfaceCard,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.0),
+            side: BorderSide(color: AppColors.accentPurple.withAlpha(40)),
+          ),
+          title: const Text(
+            'Como jogar',
+            style: TextStyle(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ],
-      ),
+          content: const Text(
+            'Você é o gato 🐱. Toque em uma casa adjacente vazia para mover.\n\nChegue à borda do tabuleiro para escapar!\n\nA CPU bloqueará uma casa após cada jogada sua.',
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 15.0,
+              height: 1.5,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'ENTENDI',
+                style: TextStyle(
+                  color: AppColors.accent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
-class _IconBtn extends StatelessWidget {
-  const _IconBtn({
-    required this.icon,
-    required this.onTap,
-    this.isCircle = false,
-  });
-
-  final IconData icon;
+class _HeaderActionBtn extends StatelessWidget {
   final VoidCallback onTap;
-  final bool isCircle;
+  final IconData icon;
+  final Color backgroundColor;
+  final Color iconColor;
+
+  const _HeaderActionBtn({
+    required this.onTap,
+    required this.icon,
+    required this.backgroundColor,
+    required this.iconColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: AppColors.surfaceCard,
-          shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
-          borderRadius: isCircle ? null : BorderRadius.circular(8),
+    return Material(
+      color: backgroundColor,
+      borderRadius: BorderRadius.circular(18.0),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18.0),
+        child: Container(
+          width: 44.0,
+          height: 44.0,
+          alignment: Alignment.center,
+          child: Icon(icon, color: iconColor, size: 20.0),
         ),
-        child: Icon(icon, color: AppColors.textSecondary, size: 18),
       ),
     );
   }

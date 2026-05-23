@@ -3,6 +3,8 @@ import '../../domain/entities/difficulty.dart';
 import '../../domain/entities/game_result.dart';
 import '../../domain/entities/position.dart';
 
+const _kKeep = Object();
+
 class GameStateViewModel {
   const GameStateViewModel({
     required this.board,
@@ -13,6 +15,7 @@ class GameStateViewModel {
     required this.difficulty,
     required this.validMoves,
     required this.isCpuThinking,
+    this.lastBarrierPosition,
   });
 
   final List<List<CellState>> board;
@@ -23,6 +26,7 @@ class GameStateViewModel {
   final Difficulty difficulty;
   final List<Position> validMoves;
   final bool isCpuThinking;
+  final Position? lastBarrierPosition;
 
   GameStateViewModel copyWith({
     List<List<CellState>>? board,
@@ -33,6 +37,7 @@ class GameStateViewModel {
     Difficulty? difficulty,
     List<Position>? validMoves,
     bool? isCpuThinking,
+    Object? lastBarrierPosition = _kKeep,
   }) =>
       GameStateViewModel(
         board: board ?? this.board,
@@ -43,5 +48,8 @@ class GameStateViewModel {
         difficulty: difficulty ?? this.difficulty,
         validMoves: validMoves ?? this.validMoves,
         isCpuThinking: isCpuThinking ?? this.isCpuThinking,
+        lastBarrierPosition: identical(lastBarrierPosition, _kKeep)
+            ? this.lastBarrierPosition
+            : lastBarrierPosition as Position?,
       );
 }

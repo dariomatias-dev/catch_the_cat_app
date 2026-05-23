@@ -56,11 +56,14 @@ class GameScreen extends ConsumerWidget {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+            children: <Widget>[
               const GameHeader(),
               const ScorePanel(),
+              SizedBox(height: 8.0),
               const DifficultySelector(),
+              SizedBox(height: 8.0),
               const StatusBanner(),
+              SizedBox(height: 8.0),
               const GameBoardWidget(),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
@@ -87,7 +90,7 @@ class GameScreen extends ConsumerWidget {
                     ),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: <Widget>[
                         Icon(
                           Icons.refresh_rounded,
                           color: Colors.white,
@@ -174,12 +177,12 @@ class _ResultDialog extends StatelessWidget {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             _DialogHeader(color: color, icon: icon, title: title),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 20, 24, 26),
               child: Column(
-                children: [
+                children: <Widget>[
                   Text(
                     subtitle,
                     textAlign: TextAlign.center,
@@ -245,7 +248,7 @@ class _DialogHeader extends StatelessWidget {
           ),
         ),
         child: Stack(
-          children: [
+          children: <Widget>[
             Positioned(top: 18, left: 26, child: _dot(9, 0.25)),
             Positioned(top: 46, left: 52, child: _dot(5, 0.18)),
             Positioned(top: 22, right: 30, child: _dot(6, 0.20)),
@@ -256,10 +259,10 @@ class _DialogHeader extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 32),
               child: Column(
-                children: [
+                children: <Widget>[
                   Stack(
                     alignment: Alignment.center,
-                    children: [
+                    children: <Widget>[
                       Container(
                         width: 100,
                         height: 100,
@@ -331,7 +334,7 @@ class _ScoreBadge extends StatelessWidget {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: <Widget>[
           const Icon(
             Icons.emoji_events_rounded,
             color: AppColors.accent,

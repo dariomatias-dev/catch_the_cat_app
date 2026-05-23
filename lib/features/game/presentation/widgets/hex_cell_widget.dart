@@ -11,6 +11,7 @@ class HexCellWidget extends StatelessWidget {
     required this.cellState,
     required this.size,
     required this.isValidMove,
+    required this.isLastBarrier,
     required this.onTap,
   });
 
@@ -18,6 +19,7 @@ class HexCellWidget extends StatelessWidget {
   final CellState cellState;
   final double size;
   final bool isValidMove;
+  final bool isLastBarrier;
   final VoidCallback? onTap;
 
   @override
@@ -31,7 +33,7 @@ class HexCellWidget extends StatelessWidget {
 
     if (isCat) {
       bgColor = AppColors.cellCat;
-      child = _CatFace(size: size);
+      child = _AnimatedCat(size: size);
     } else if (isBlocked) {
       bgColor = AppColors.cellBlocked;
     } else if (isValidMove) {
@@ -41,74 +43,88 @@ class HexCellWidget extends StatelessWidget {
       bgColor = AppColors.cellEmpty;
     }
 
-    return GestureDetector(
-      onTap: isValidMove ? onTap : null,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: bgColor,
-          border: borderColor != null
-              ? Border.all(color: borderColor, width: 2.5)
-              : null,
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: [
+        GestureDetector(
+          onTap: isValidMove ? onTap : null,
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: bgColor,
+              border: borderColor != null
+                  ? Border.all(color: borderColor, width: 2.5)
+                  : null,
+            ),
+            child: child != null ? Center(child: child) : null,
+          ),
         ),
-        child: child,
-      ),
+        if (isLastBarrier)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.65, end: 0.0),
+                duration: const Duration(milliseconds: 600),
+                builder: (_, v, _) => Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: v),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
 
-class _CatFace extends StatelessWidget {
-  const _CatFace({required this.size});
-
+class _AnimatedCat extends StatefulWidget {
+  const _AnimatedCat({required this.size});
   final double size;
 
   @override
+  State<_AnimatedCat> createState() => _AnimatedCatState();
+}
+
+class _AnimatedCatState extends State<_AnimatedCat>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 850),
+    )..repeat(reverse: true);
+    _scale = Tween<double>(begin: 0.82, end: 1.0).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final eyeSize = size * 0.14;
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Transform.translate(
-              offset: Offset(-size * 0.08, -size * 0.04),
-              child: Container(
-                width: eyeSize,
-                height: eyeSize,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF3D2B00),
-                ),
-              ),
-            ),
-            Transform.translate(
-              offset: Offset(size * 0.08, -size * 0.04),
-              child: Container(
-                width: eyeSize,
-                height: eyeSize,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xFF3D2B00),
-                ),
-              ),
-            ),
-          ],
+    return AnimatedBuilder(
+      animation: _scale,
+      builder: (_, _) => Transform.scale(
+        scale: _scale.value,
+        child: Text(
+          '🐱',
+          style: TextStyle(fontSize: widget.size * 0.68, height: 1),
+          textAlign: TextAlign.center,
         ),
-        Transform.translate(
-          offset: Offset(0, size * 0.1),
-          child: Container(
-            width: eyeSize * 0.6,
-            height: eyeSize * 0.6,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xFFC47A00),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -25,14 +25,22 @@ class StatusBanner extends ConsumerWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: inProgress ? AppColors.accent : AppColors.surfaceCard,
+          color: inProgress
+              ? AppColors.accent.withValues(alpha: 0.10)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
+          border: inProgress
+              ? Border.all(color: AppColors.accent.withValues(alpha: 0.7), width: 1.5)
+              : Border.all(
+                  color: AppColors.textMuted.withValues(alpha: 0.3),
+                  width: 1,
+                ),
         ),
         child: Text(
           text,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: inProgress ? Colors.black87 : AppColors.textSecondary,
+            color: inProgress ? AppColors.accent : AppColors.textSecondary,
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),

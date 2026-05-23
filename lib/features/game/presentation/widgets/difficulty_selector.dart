@@ -8,67 +8,76 @@ import '../providers/game_provider.dart';
 class DifficultySelector extends ConsumerWidget {
   const DifficultySelector({super.key});
 
+  static Color _colorFor(Difficulty d) => switch (d) {
+        Difficulty.easy => const Color(0xFF34D399),
+        Difficulty.medium => AppColors.accent,
+        Difficulty.hard => const Color(0xFFEF4444),
+      };
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final current = ref.watch(gameProvider.select((s) => s.difficulty));
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
-        children: [
-          const Text(
-            'Dificuldade:',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Row(
-              children: Difficulty.values.map((d) {
-                final selected = d == current;
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3),
-                    child: GestureDetector(
-                      onTap: () =>
-                          ref.read(gameProvider.notifier).setDifficulty(d),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        height: 32,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: selected
-                              ? AppColors.accent
-                              : AppColors.surfaceCard,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: selected
-                                ? AppColors.accent
-                                : AppColors.textMuted.withValues(alpha: 0.4),
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          d.label,
-                          style: TextStyle(
-                            color: selected
-                                ? Colors.black87
-                                : AppColors.textSecondary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+        children: Difficulty.values.map((d) {
+          final selected = d == current;
+          final color = _colorFor(d);
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              child: GestureDetector(
+                onTap: () =>
+                    ref.read(gameProvider.notifier).setDifficulty(d),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  height: 38,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? color.withValues(alpha: 0.15)
+                        : AppColors.surfaceCard,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: selected
+                          ? color.withValues(alpha: 0.8)
+                          : AppColors.textMuted.withValues(alpha: 0.22),
+                      width: selected ? 1.5 : 1,
                     ),
                   ),
-                );
-              }).toList(),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: 7,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: selected
+                              ? color
+                              : AppColors.textMuted.withValues(alpha: 0.45),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        d.label,
+                        style: TextStyle(
+                          color: selected ? color : AppColors.textMuted,
+                          fontSize: 12,
+                          fontWeight: selected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+          );
+        }).toList(),
       ),
     );
   }
