@@ -1,0 +1,5 @@
+# DotEnv
+.env
+
+# FVM Version Cache
+.fvm/
