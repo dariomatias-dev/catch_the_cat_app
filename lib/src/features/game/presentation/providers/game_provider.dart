@@ -2,15 +2,15 @@ import 'dart:math';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/entities/cell_state.dart';
-import '../../domain/entities/difficulty.dart';
-import '../../domain/entities/game_result.dart';
-import '../../domain/entities/position.dart';
-import '../../domain/repositories/score_repository.dart';
-import '../../domain/services/board_service.dart';
-import '../../domain/services/cpu_ai_service.dart';
-import '../view_models/game_state_view_model.dart';
-import '../../di/score_repository_provider.dart';
+import 'package:catch_the_cat/src/features/game/di/score_repository_provider.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/cell_state.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/difficulty.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/game_result.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/position.dart';
+import 'package:catch_the_cat/src/features/game/domain/repositories/score_repository.dart';
+import 'package:catch_the_cat/src/features/game/domain/services/board_service.dart';
+import 'package:catch_the_cat/src/features/game/domain/services/cpu_ai_service.dart';
+import 'package:catch_the_cat/src/features/game/presentation/view_models/game_state_view_model.dart';
 
 final gameProvider = NotifierProvider<GameNotifier, GameStateViewModel>(
   GameNotifier.new,

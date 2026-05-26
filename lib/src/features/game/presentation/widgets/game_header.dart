@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:catch_the_cat/core/providers/audio_provider.dart';
-import 'package:catch_the_cat/core/theme/app_colors.dart';
+import 'package:catch_the_cat/src/core/providers/audio_provider.dart';
+import 'package:catch_the_cat/src/core/theme/app_colors.dart';
 
 class GameHeader extends ConsumerWidget {
   const GameHeader({super.key});

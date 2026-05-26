@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../domain/repositories/score_repository.dart';
+import 'package:catch_the_cat/src/features/game/domain/repositories/score_repository.dart';
 
 const _kPlayerScore = 'player_score';
 const _kCpuScore = 'cpu_score';

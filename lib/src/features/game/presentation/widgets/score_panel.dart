@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/theme/app_colors.dart';
-import '../providers/game_provider.dart';
+import 'package:catch_the_cat/src/core/theme/app_colors.dart';
+
+import 'package:catch_the_cat/src/features/game/presentation/providers/game_provider.dart';
 
 class ScorePanel extends ConsumerWidget {
   const ScorePanel({super.key});

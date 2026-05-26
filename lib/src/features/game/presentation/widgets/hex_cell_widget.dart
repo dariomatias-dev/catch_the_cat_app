@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/theme/app_colors.dart';
-import '../../domain/entities/cell_state.dart';
-import '../../domain/entities/position.dart';
+import 'package:catch_the_cat/src/core/theme/app_colors.dart';
+
+import 'package:catch_the_cat/src/features/game/domain/entities/cell_state.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/position.dart';
 
 class HexCellWidget extends StatelessWidget {
   const HexCellWidget({

@@ -1,7 +1,7 @@
-import '../../domain/entities/cell_state.dart';
-import '../../domain/entities/difficulty.dart';
-import '../../domain/entities/game_result.dart';
-import '../../domain/entities/position.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/cell_state.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/difficulty.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/game_result.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/position.dart';
 
 const _kKeep = Object();
 

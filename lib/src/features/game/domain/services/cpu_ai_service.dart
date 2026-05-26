@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import '../entities/cell_state.dart';
-import '../entities/difficulty.dart';
-import '../entities/position.dart';
-import 'board_service.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/cell_state.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/difficulty.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/position.dart';
+import 'package:catch_the_cat/src/features/game/domain/services/board_service.dart';
 
 abstract final class CpuAiService {
   static final _rng = Random();

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/providers/audio_provider.dart';
-import '../../../../../core/theme/app_colors.dart';
-import '../../domain/entities/game_result.dart';
-import '../providers/game_provider.dart';
-import '../view_models/game_state_view_model.dart';
-import '../widgets/difficulty_selector.dart';
-import '../widgets/game_board_widget.dart';
-import '../widgets/game_header.dart';
-import '../widgets/score_panel.dart';
-import '../widgets/status_banner.dart';
+import 'package:catch_the_cat/src/core/providers/audio_provider.dart';
+import 'package:catch_the_cat/src/core/theme/app_colors.dart';
+
+import 'package:catch_the_cat/src/features/game/domain/entities/game_result.dart';
+import 'package:catch_the_cat/src/features/game/presentation/providers/game_provider.dart';
+import 'package:catch_the_cat/src/features/game/presentation/view_models/game_state_view_model.dart';
+import 'package:catch_the_cat/src/features/game/presentation/widgets/difficulty_selector.dart';
+import 'package:catch_the_cat/src/features/game/presentation/widgets/game_board_widget.dart';
+import 'package:catch_the_cat/src/features/game/presentation/widgets/game_header.dart';
+import 'package:catch_the_cat/src/features/game/presentation/widgets/score_panel.dart';
+import 'package:catch_the_cat/src/features/game/presentation/widgets/status_banner.dart';
 
 class GameScreen extends ConsumerWidget {
   const GameScreen({super.key});

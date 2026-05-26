@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/theme/app_colors.dart';
-import '../../domain/entities/difficulty.dart';
-import '../providers/game_provider.dart';
+import 'package:catch_the_cat/src/core/theme/app_colors.dart';
+
+import 'package:catch_the_cat/src/features/game/domain/entities/difficulty.dart';
+import 'package:catch_the_cat/src/features/game/presentation/providers/game_provider.dart';
 
 class DifficultySelector extends ConsumerWidget {
   const DifficultySelector({super.key});

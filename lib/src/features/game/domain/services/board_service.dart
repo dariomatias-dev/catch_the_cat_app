@@ -1,9 +1,9 @@
 import 'dart:collection';
 import 'dart:math';
 
-import '../entities/cell_state.dart';
-import '../entities/game_result.dart';
-import '../entities/position.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/cell_state.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/game_result.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/position.dart';
 
 const int kBoardSize = 11;
 const Position kCatStart = Position(5, 5);
