@@ -7,7 +7,6 @@ import 'package:catch_the_cat/src/features/game/domain/entities/game_result.dart
 import 'package:catch_the_cat/src/features/game/domain/entities/position.dart';
 
 const int kBoardSize = 11;
-const Position kCatStart = Position(5, 5);
 
 (int, int) _blockedRange(Difficulty difficulty) => switch (difficulty) {
   Difficulty.easy => (6, 10),
@@ -27,7 +26,18 @@ abstract final class BoardService {
     return board.map((row) => List<CellState>.from(row)).toList();
   }
 
-  static List<List<CellState>> initBoard(Random rng, Difficulty difficulty) {
+  static Position catStart(Difficulty difficulty, Random rng) =>
+      switch (difficulty) {
+        Difficulty.easy => Position(2 + rng.nextInt(7), 2 + rng.nextInt(7)),
+        Difficulty.medium => Position(3 + rng.nextInt(5), 3 + rng.nextInt(5)),
+        Difficulty.hard => const Position(5, 5),
+      };
+
+  static List<List<CellState>> initBoard(
+    Random rng,
+    Difficulty difficulty,
+    Position catStart,
+  ) {
     final (min, max) = _blockedRange(difficulty);
     final count = min + rng.nextInt(max - min + 1);
     List<List<CellState>> board;
@@ -37,14 +47,14 @@ abstract final class BoardService {
       final available = <Position>[
         for (int r = 0; r < kBoardSize; r++)
           for (int c = 0; c < kBoardSize; c++)
-            if (r != kCatStart.row || c != kCatStart.col) Position(r, c),
+            if (r != catStart.row || c != catStart.col) Position(r, c),
       ]..shuffle(rng);
 
       for (int i = 0; i < count; i++) {
         board[available[i].row][available[i].col] = CellState.blocked;
       }
-      board[kCatStart.row][kCatStart.col] = CellState.cat;
-    } while (shortestEscapeDistance(kCatStart, board) == null);
+      board[catStart.row][catStart.col] = CellState.cat;
+    } while (shortestEscapeDistance(catStart, board) == null);
 
     return board;
   }
