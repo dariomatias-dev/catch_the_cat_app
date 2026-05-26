@@ -6,22 +6,32 @@ import '../../domain/entities/cell_state.dart';
 import '../../domain/entities/difficulty.dart';
 import '../../domain/entities/game_result.dart';
 import '../../domain/entities/position.dart';
+import '../../domain/repositories/score_repository.dart';
 import '../../domain/services/board_service.dart';
 import '../../domain/services/cpu_ai_service.dart';
 import '../view_models/game_state_view_model.dart';
+import '../../di/score_repository_provider.dart';
 
-final gameProvider = NotifierProvider<GameNotifier, GameStateViewModel>(GameNotifier.new);
+final gameProvider = NotifierProvider<GameNotifier, GameStateViewModel>(
+  GameNotifier.new,
+);
 
 class GameNotifier extends Notifier<GameStateViewModel> {
   final _rng = Random();
   int _generation = 0;
 
+  ScoreRepository get _repo => ref.read(scoreRepositoryProvider);
+
   @override
-  GameStateViewModel build() => _newGameState(
-        difficulty: Difficulty.medium,
-        playerScore: 0,
-        cpuScore: 0,
-      );
+  GameStateViewModel build() {
+    final repo = ref.watch(scoreRepositoryProvider);
+
+    return _newGameState(
+      difficulty: Difficulty.medium,
+      playerScore: repo.playerScore,
+      cpuScore: repo.cpuScore,
+    );
+  }
 
   GameStateViewModel _newGameState({
     required Difficulty difficulty,
@@ -53,6 +63,7 @@ class GameNotifier extends Notifier<GameStateViewModel> {
 
   void clearScores() {
     _generation++;
+    _repo.clearScores();
     state = _newGameState(
       difficulty: state.difficulty,
       playerScore: 0,
@@ -79,14 +90,16 @@ class GameNotifier extends Notifier<GameStateViewModel> {
     final resultAfterMove = BoardService.checkResult(position, board);
 
     if (resultAfterMove == GameResult.playerWin) {
+      final newPlayerScore = state.playerScore + 1;
       state = state.copyWith(
         board: BoardService.copyBoard(board),
         catPosition: position,
         result: GameResult.playerWin,
-        playerScore: state.playerScore + 1,
+        playerScore: newPlayerScore,
         validMoves: const [],
         isCpuThinking: false,
       );
+      await _repo.savePlayerScore(newPlayerScore);
       return;
     }
 
@@ -102,7 +115,11 @@ class GameNotifier extends Notifier<GameStateViewModel> {
 
     // CPU move
     board = BoardService.copyBoard(state.board);
-    final cpuMove = CpuAiService.getMove(state.catPosition, board, state.difficulty);
+    final cpuMove = CpuAiService.getMove(
+      state.catPosition,
+      board,
+      state.difficulty,
+    );
     if (cpuMove != null) {
       board[cpuMove.row][cpuMove.col] = CellState.blocked;
     }
@@ -111,14 +128,21 @@ class GameNotifier extends Notifier<GameStateViewModel> {
     final newMoves = resultAfterCpu == GameResult.inProgress
         ? BoardService.validMoves(state.catPosition, board)
         : const <Position>[];
+    final newCpuScore = resultAfterCpu == GameResult.cpuWin
+        ? state.cpuScore + 1
+        : state.cpuScore;
 
     state = state.copyWith(
       board: BoardService.copyBoard(board),
       result: resultAfterCpu,
-      cpuScore: resultAfterCpu == GameResult.cpuWin ? state.cpuScore + 1 : state.cpuScore,
+      cpuScore: newCpuScore,
       validMoves: newMoves,
       isCpuThinking: false,
       lastBarrierPosition: cpuMove,
     );
+
+    if (resultAfterCpu == GameResult.cpuWin) {
+      await _repo.saveCpuScore(newCpuScore);
+    }
   }
 }
