@@ -2,13 +2,18 @@ import 'dart:collection';
 import 'dart:math';
 
 import 'package:catch_the_cat/src/features/game/domain/entities/cell_state.dart';
+import 'package:catch_the_cat/src/features/game/domain/entities/difficulty.dart';
 import 'package:catch_the_cat/src/features/game/domain/entities/game_result.dart';
 import 'package:catch_the_cat/src/features/game/domain/entities/position.dart';
 
 const int kBoardSize = 11;
 const Position kCatStart = Position(5, 5);
-const int kMinBlocked = 9;
-const int kMaxBlocked = 15;
+
+(int, int) _blockedRange(Difficulty difficulty) => switch (difficulty) {
+  Difficulty.easy => (6, 10),
+  Difficulty.medium => (9, 15),
+  Difficulty.hard => (12, 16),
+};
 
 abstract final class BoardService {
   static List<List<CellState>> createBoard() {
@@ -22,8 +27,9 @@ abstract final class BoardService {
     return board.map((row) => List<CellState>.from(row)).toList();
   }
 
-  static List<List<CellState>> initBoard(Random rng) {
-    final count = kMinBlocked + rng.nextInt(kMaxBlocked - kMinBlocked + 1);
+  static List<List<CellState>> initBoard(Random rng, Difficulty difficulty) {
+    final (min, max) = _blockedRange(difficulty);
+    final count = min + rng.nextInt(max - min + 1);
     List<List<CellState>> board;
 
     do {
@@ -50,15 +56,21 @@ abstract final class BoardService {
 
     if (r % 2 == 0) {
       offsets = [
-        (r - 1, c - 1), (r - 1, c),
-        (r, c - 1), (r, c + 1),
-        (r + 1, c - 1), (r + 1, c),
+        (r - 1, c - 1),
+        (r - 1, c),
+        (r, c - 1),
+        (r, c + 1),
+        (r + 1, c - 1),
+        (r + 1, c),
       ];
     } else {
       offsets = [
-        (r - 1, c), (r - 1, c + 1),
-        (r, c - 1), (r, c + 1),
-        (r + 1, c), (r + 1, c + 1),
+        (r - 1, c),
+        (r - 1, c + 1),
+        (r, c - 1),
+        (r, c + 1),
+        (r + 1, c),
+        (r + 1, c + 1),
       ];
     }
 
@@ -78,10 +90,9 @@ abstract final class BoardService {
   static List<Position> validMoves(
     Position catPos,
     List<List<CellState>> board,
-  ) =>
-      neighbors(catPos)
-          .where((p) => board[p.row][p.col] == CellState.empty)
-          .toList();
+  ) => neighbors(
+    catPos,
+  ).where((p) => board[p.row][p.col] == CellState.empty).toList();
 
   static int? shortestEscapeDistance(
     Position catPos,
@@ -141,10 +152,7 @@ abstract final class BoardService {
     return path.reversed.toList();
   }
 
-  static GameResult checkResult(
-    Position catPos,
-    List<List<CellState>> board,
-  ) {
+  static GameResult checkResult(Position catPos, List<List<CellState>> board) {
     if (isBorder(catPos)) return GameResult.playerWin;
     if (validMoves(catPos, board).isEmpty) return GameResult.cpuWin;
     return GameResult.inProgress;

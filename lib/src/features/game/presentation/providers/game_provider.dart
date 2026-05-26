@@ -38,7 +38,7 @@ class GameNotifier extends Notifier<GameStateViewModel> {
     required int playerScore,
     required int cpuScore,
   }) {
-    final board = BoardService.initBoard(_rng);
+    final board = BoardService.initBoard(_rng, difficulty);
     final moves = BoardService.validMoves(kCatStart, board);
     return GameStateViewModel(
       board: board,
