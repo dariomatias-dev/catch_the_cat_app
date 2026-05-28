@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="catch_the_cat"
+        android:label="Catch The Cat"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
