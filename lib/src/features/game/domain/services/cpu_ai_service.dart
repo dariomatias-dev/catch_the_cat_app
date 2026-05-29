@@ -12,18 +12,17 @@ abstract final class CpuAiService {
     Position catPos,
     List<List<CellState>> board,
     Difficulty difficulty,
-  ) =>
-      switch (difficulty) {
-        Difficulty.easy => _easy(board),
-        Difficulty.medium => _medium(catPos, board),
-        Difficulty.hard => _hard(catPos, board),
-      };
+  ) => switch (difficulty) {
+    Difficulty.easy => _easy(board),
+    Difficulty.medium => _medium(catPos, board),
+    Difficulty.hard => _hard(catPos, board),
+  };
 
-  static List<Position> _emptyCells(List<List<CellState>> board) => [
-        for (int r = 0; r < kBoardSize; r++)
-          for (int c = 0; c < kBoardSize; c++)
-            if (board[r][c] == CellState.empty) Position(r, c),
-      ];
+  static List<Position> _emptyCells(List<List<CellState>> board) => <Position>[
+    for (int r = 0; r < kBoardSize; r++)
+      for (int c = 0; c < kBoardSize; c++)
+        if (board[r][c] == CellState.empty) Position(r, c),
+  ];
 
   static Position? _easy(List<List<CellState>> board) {
     final empty = _emptyCells(board);
@@ -41,7 +40,8 @@ abstract final class CpuAiService {
     final path = BoardService.shortestEscapePath(catPos, board);
     if (path.isEmpty) return _easy(board);
 
-    final currentDist = BoardService.shortestEscapeDistance(catPos, board) ?? 999;
+    final currentDist =
+        BoardService.shortestEscapeDistance(catPos, board) ?? 999;
     Position? best;
     int bestGain = -1;
 

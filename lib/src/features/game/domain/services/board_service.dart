@@ -65,7 +65,7 @@ abstract final class BoardService {
     final List<(int, int)> offsets;
 
     if (r % 2 == 0) {
-      offsets = [
+      offsets = <(int, int)>[
         (r - 1, c - 1),
         (r - 1, c),
         (r, c - 1),
@@ -74,7 +74,7 @@ abstract final class BoardService {
         (r + 1, c),
       ];
     } else {
-      offsets = [
+      offsets = <(int, int)>[
         (r - 1, c),
         (r - 1, c + 1),
         (r, c - 1),
@@ -84,7 +84,7 @@ abstract final class BoardService {
       ];
     }
 
-    return [
+    return <Position>[
       for (final (nr, nc) in offsets)
         if (nr >= 0 && nr < kBoardSize && nc >= 0 && nc < kBoardSize)
           Position(nr, nc),
@@ -130,7 +130,7 @@ abstract final class BoardService {
     Position catPos,
     List<List<CellState>> board,
   ) {
-    if (isBorder(catPos)) return [];
+    if (isBorder(catPos)) return <Position>[];
     final queue = Queue<Position>();
     final cameFrom = <Position, Position?>{catPos: null};
     queue.add(catPos);
@@ -151,7 +151,7 @@ abstract final class BoardService {
       }
     }
 
-    if (exit == null) return [];
+    if (exit == null) return <Position>[];
 
     final path = <Position>[];
     Position? cur = exit;
