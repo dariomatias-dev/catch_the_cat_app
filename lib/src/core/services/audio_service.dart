@@ -1,20 +1,21 @@
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
-class AudioService {
+class AudioService with WidgetsBindingObserver {
   AudioPlayer? _bgPlayer;
   bool _muted = false;
 
   bool get isMuted => _muted;
 
   Future<void> init() async {
+    WidgetsBinding.instance.addObserver(this);
+
     try {
       _bgPlayer = AudioPlayer();
       _bgPlayer!.onPlayerStateChanged.listen((state) {
         debugPrint('[Audio] bg state: $state');
       });
-      // Use loop + low volume; no setAudioContext so system defaults apply
-      // (avoids AUDIOFOCUS_LOSS issues on Xiaomi/MIUI)
+
       await _bgPlayer!.setReleaseMode(ReleaseMode.loop);
       await _bgPlayer!.setVolume(0.3);
       await _bgPlayer!.play(AssetSource('audio/background_music.wav'));
@@ -25,6 +26,7 @@ class AudioService {
 
   void setMuted(bool muted) {
     _muted = muted;
+
     if (muted) {
       _bgPlayer?.pause();
     } else {
@@ -32,22 +34,26 @@ class AudioService {
     }
   }
 
-  // Volume balanced: effects softer than they were, jump reduced most
   Future<void> playCatJump() => _effect('audio/cat_jump.wav', volume: 0.45);
+
   Future<void> playBarrierPlaced() =>
       _effect('audio/barrier_placed.wav', volume: 0.55);
+
   Future<void> playWin() async {
     await _bgPlayer?.pause();
+
     await _effect('audio/win.wav', volume: 0.75);
   }
 
   Future<void> playLose() async {
     await _bgPlayer?.pause();
+
     await _effect('audio/lose.wav', volume: 0.75);
   }
 
   Future<void> resumeBackground() async {
     if (_muted) return;
+
     try {
       await _bgPlayer?.resume();
     } catch (e) {
@@ -59,25 +65,38 @@ class AudioService {
     if (_muted) return;
     try {
       final p = AudioPlayer();
-      // AudioFocus.none: effect players must not take focus from bg music.
-      // Without this, each tap sends AUDIOFOCUS_LOSS to the bg player,
-      // which releases it permanently.
-      await p.setAudioContext(AudioContext(
-        android: AudioContextAndroid(
-          audioFocus: AndroidAudioFocus.none,
-          contentType: AndroidContentType.sonification,
-          usageType: AndroidUsageType.game,
+
+      await p.setAudioContext(
+        AudioContext(
+          android: AudioContextAndroid(
+            audioFocus: AndroidAudioFocus.none,
+            contentType: AndroidContentType.sonification,
+            usageType: AndroidUsageType.game,
+          ),
         ),
-      ));
+      );
       await p.setVolume(volume);
       await p.play(AssetSource(asset));
+
       p.onPlayerComplete.first.then((_) => p.dispose()).ignore();
     } catch (e) {
       debugPrint('[Audio] effect error ($asset): $e');
     }
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      _bgPlayer?.pause();
+    } else if (state == AppLifecycleState.resumed) {
+      if (!_muted) _bgPlayer?.resume();
+    }
+  }
+
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
     _bgPlayer?.dispose();
     _bgPlayer = null;
   }
