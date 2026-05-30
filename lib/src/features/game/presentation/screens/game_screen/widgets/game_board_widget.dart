@@ -6,7 +6,7 @@ import 'package:catch_the_cat/src/core/theme/app_colors.dart';
 import 'package:catch_the_cat/src/features/game/domain/entities/position.dart';
 import 'package:catch_the_cat/src/features/game/domain/services/board_service.dart';
 import 'package:catch_the_cat/src/features/game/presentation/providers/game_provider.dart';
-import 'package:catch_the_cat/src/features/game/presentation/widgets/hex_cell_widget.dart';
+import 'package:catch_the_cat/src/features/game/presentation/screens/game_screen/widgets/hex_cell_widget.dart';
 
 class GameBoardWidget extends ConsumerWidget {
   const GameBoardWidget({super.key});

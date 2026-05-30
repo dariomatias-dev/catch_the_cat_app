@@ -1,146 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:catch_the_cat/src/core/providers/audio_provider.dart';
 import 'package:catch_the_cat/src/core/theme/app_colors.dart';
 
-import 'package:catch_the_cat/src/features/game/domain/entities/game_result.dart';
-import 'package:catch_the_cat/src/features/game/presentation/providers/game_provider.dart';
-import 'package:catch_the_cat/src/features/game/presentation/view_models/game_state_view_model.dart';
-import 'package:catch_the_cat/src/features/game/presentation/widgets/difficulty_selector.dart';
-import 'package:catch_the_cat/src/features/game/presentation/widgets/game_board_widget.dart';
-import 'package:catch_the_cat/src/features/game/presentation/widgets/game_header.dart';
-import 'package:catch_the_cat/src/features/game/presentation/widgets/score_panel.dart';
-import 'package:catch_the_cat/src/features/game/presentation/widgets/status_banner.dart';
-
-class GameScreen extends ConsumerWidget {
-  const GameScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final audio = ref.watch(audioServiceProvider);
-
-    ref.listen<bool>(isMutedProvider, (_, muted) => audio.setMuted(muted));
-
-    ref.listen<GameStateViewModel>(gameProvider, (prev, next) {
-      if (prev == null) return;
-      if (prev.catPosition != next.catPosition) {
-        audio.playCatJump();
-      }
-      if (prev.isCpuThinking &&
-          !next.isCpuThinking &&
-          next.result == GameResult.inProgress) {
-        audio.playBarrierPlaced();
-      }
-      if (next.result == GameResult.playerWin &&
-          prev.result != GameResult.playerWin) {
-        audio.playWin();
-      }
-      if (next.result == GameResult.cpuWin &&
-          prev.result != GameResult.cpuWin) {
-        audio.playLose();
-      }
-      if (prev.result != GameResult.inProgress &&
-          next.result == GameResult.inProgress) {
-        audio.resumeBackground();
-      }
-    });
-
-    ref.listen<GameResult>(gameProvider.select((s) => s.result), (prev, next) {
-      if (next == GameResult.inProgress) return;
-      _showResultDialog(context, ref, next);
-    });
-
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const GameHeader(),
-              const ScorePanel(),
-              SizedBox(height: 8.0),
-              const DifficultySelector(),
-              SizedBox(height: 8.0),
-              const StatusBanner(),
-              SizedBox(height: 8.0),
-              const GameBoardWidget(),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                child: Text(
-                  'Toque em uma casa vazia para o gato pular. A CPU bloqueará uma saída em seguida.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 11,
-                    height: 1.4,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: GestureDetector(
-                  onTap: () => ref.read(gameProvider.notifier).newGame(),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentBlue,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.refresh_rounded,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Novo Jogo',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showResultDialog(
-    BuildContext context,
-    WidgetRef ref,
-    GameResult result,
-  ) {
-    final isWin = result == GameResult.playerWin;
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      barrierColor: Colors.black.withValues(alpha: 0.75),
-      builder: (ctx) => _ResultDialog(
-        isWin: isWin,
-        onNewGame: () {
-          Navigator.pop(ctx);
-          ref.read(gameProvider.notifier).newGame();
-        },
-      ),
-    );
-  }
-}
-
-class _ResultDialog extends StatelessWidget {
-  const _ResultDialog({required this.isWin, required this.onNewGame});
+class ResultDialog extends StatelessWidget {
+  const ResultDialog({
+    super.key,
+    required this.isWin,
+    required this.onNewGame,
+  });
 
   final bool isWin;
   final VoidCallback onNewGame;
@@ -155,9 +22,8 @@ class _ResultDialog extends StatelessWidget {
     final subtitle = isWin
         ? 'O gato superou a cerca e alcançou a liberdade! 🎉'
         : 'A CPU bloqueou todas as vias de fuga. 🐱';
-    final scoreLabel = isWin
-        ? '+1 Vitória para o Gato'
-        : '+1 Vitória para a CPU';
+    final scoreLabel =
+        isWin ? '+1 Vitória para o Gato' : '+1 Vitória para a CPU';
     final btnLabel = isWin ? 'Jogar Novamente' : 'Tentar Novamente';
 
     return Dialog(
@@ -256,7 +122,6 @@ class _DialogHeader extends StatelessWidget {
             Positioned(top: 54, right: 58, child: _dot(10, 0.14)),
             Positioned(bottom: 24, left: 38, child: _dot(7, 0.18)),
             Positioned(bottom: 14, right: 26, child: _dot(5, 0.22)),
-
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 32),
               child: Column(
