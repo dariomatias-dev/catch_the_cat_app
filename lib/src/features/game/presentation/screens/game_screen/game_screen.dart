@@ -56,23 +56,28 @@ class GameScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: const <Widget>[
-              GameHeader(),
-              ScorePanel(),
-              SizedBox(height: 8.0),
-              DifficultySelector(),
-              SizedBox(height: 8.0),
-              StatusBanner(),
-              SizedBox(height: 8.0),
-              GameBoardWidget(),
-              GameInstructions(),
-              SizedBox(height: 12),
-              NewGameButton(),
-            ],
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: const <Widget>[
+                  GameHeader(),
+                  ScorePanel(),
+                  SizedBox(height: 8.0),
+                  DifficultySelector(),
+                  SizedBox(height: 8.0),
+                  StatusBanner(),
+                  SizedBox(height: 8.0),
+                  GameBoardWidget(),
+                  GameInstructions(),
+                  SizedBox(height: 12),
+                  NewGameButton(),
+                ],
+              ),
+            ),
           ),
         ),
       ),
